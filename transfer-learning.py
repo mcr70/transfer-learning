@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[1]:
-
-
 import pandas as pd
 import numpy as np
 import os
@@ -18,9 +12,6 @@ from keras.models import Model
 from keras.optimizers import Adam
 
 
-# In[2]:
-
-
 base_model=MobileNet(weights='imagenet',include_top=False) #imports the mobilenet model and discards the last 1000 neuron layer.
 
 x=base_model.output
@@ -30,26 +21,15 @@ x=Dense(1024,activation='relu')(x) #dense layer 2
 x=Dense(512,activation='relu')(x) #dense layer 3
 preds=Dense(3,activation='softmax')(x) #final layer with softmax activation
 
-
-# In[3]:
-
-
 model=Model(inputs=base_model.input,outputs=preds)
 #specify the inputs
 #specify the outputs
 #now a model has been created based on our architecture
 
-
-# In[4]:
-
-
 for layer in model.layers[:20]:
     layer.trainable=False
 for layer in model.layers[20:]:
     layer.trainable=True
-
-
-# In[5]:
 
 
 train_datagen=ImageDataGenerator(preprocessing_function=preprocess_input) #included in our dependencies
@@ -61,10 +41,6 @@ train_generator=train_datagen.flow_from_directory('./train/', # this is where yo
                                                  class_mode='categorical',
                                                  shuffle=True)
 
-
-# In[33]:
-
-
 model.compile(optimizer='Adam',loss='categorical_crossentropy',metrics=['accuracy'])
 # Adam optimizer
 # loss function will be categorical cross entropy
@@ -75,3 +51,4 @@ model.fit_generator(generator=train_generator,
                    steps_per_epoch=step_size_train,
                    epochs=5)
 
+model.save("weights.h5")
